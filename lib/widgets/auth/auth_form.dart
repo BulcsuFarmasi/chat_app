@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chat_app/widgets/pickers/user_image_picker.dart';
 
 import '../../shared/validators.dart';
@@ -21,6 +23,7 @@ class _AuthFormState extends State<AuthForm> {
   String _email = '';
   String _userName = '';
   String _password = '';
+  File _userImageFile;
 
   AuthMode authMode = AuthMode.logIn;
 
@@ -37,14 +40,26 @@ class _AuthFormState extends State<AuthForm> {
     });
   }
 
+  void _pickedImage(File image) {
+    _userImageFile = image;
+  }
+
   void _saveForm() {
     if (!_formKey.currentState.validate()) {
       return;
     }
+    if (_userImageFile == null && authMode == AuthMode.signUp) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text('Please pick an image'),
+        backgroundColor: Theme.of(context).errorColor,
+      ));
+    }
+
     FocusScope.of(context).unfocus();
     _formKey.currentState.save();
 
-    widget.authenicateUser(email: _email.trim(),
+    widget.authenicateUser(
+        email: _email.trim(),
         userName: _userName.trim(),
         password: _password.trim(),
         authMode: authMode,
@@ -64,8 +79,7 @@ class _AuthFormState extends State<AuthForm> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (authMode == AuthMode.signUp)
-                  UserImagePicker(),
+                  if (authMode == AuthMode.signUp) UserImagePicker(_pickedImage),
                   TextFormField(
                     key: ValueKey('email'),
                     keyboardType: TextInputType.emailAddress,
@@ -93,7 +107,7 @@ class _AuthFormState extends State<AuthForm> {
                         int minLength = 4;
                         if (Validators.minLength(value, minLength)) {
                           errorMessage =
-                          'Please provide  at least $minLength characters';
+                              'Please provide  at least $minLength characters';
                         }
                         return errorMessage;
                       },
@@ -110,7 +124,7 @@ class _AuthFormState extends State<AuthForm> {
                       int minLength = 7;
                       if (Validators.minLength(value, minLength)) {
                         errorMessage =
-                        'Please provide write at least $minLength characters';
+                            'Please provide write at least $minLength characters';
                       }
                       return errorMessage;
                     },
@@ -119,19 +133,18 @@ class _AuthFormState extends State<AuthForm> {
                     height: 10,
                   ),
                   if (widget.isLoading) CircularProgressIndicator(),
-                  if(!widget.isLoading)
-                    RaisedButton(child: Text(
-                        (authMode == AuthMode.logIn) ? 'Login' : 'Sign Up'),
+                  if (!widget.isLoading)
+                    RaisedButton(
+                        child: Text(
+                            (authMode == AuthMode.logIn) ? 'Login' : 'Sign Up'),
                         onPressed: _saveForm),
-                  if(!widget.isLoading)
+                  if (!widget.isLoading)
                     FlatButton(
                       onPressed: _changeAuthMode,
                       child: Text((authMode == AuthMode.logIn)
                           ? 'Create new account'
                           : 'Login instead'),
-                      textColor: Theme
-                          .of(context)
-                          .primaryColor,
+                      textColor: Theme.of(context).primaryColor,
                     )
                 ],
               ),
@@ -143,4 +156,9 @@ class _AuthFormState extends State<AuthForm> {
   }
 }
 
-typedef AuthenicateUser = void Function({String email, String userName, String password, AuthMode authMode, BuildContext ctx});
+typedef AuthenicateUser = void Function(
+    {String email,
+    String userName,
+    String password,
+    AuthMode authMode,
+    BuildContext ctx});
