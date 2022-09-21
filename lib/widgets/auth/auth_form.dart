@@ -1,3 +1,5 @@
+import 'package:chat_app/widgets/pickers/user_image_picker.dart';
+
 import '../../shared/validators.dart';
 import 'package:flutter/material.dart';
 
@@ -42,7 +44,11 @@ class _AuthFormState extends State<AuthForm> {
     FocusScope.of(context).unfocus();
     _formKey.currentState.save();
 
-    widget.authenicateUser(email: _email.trim(), userName: _userName.trim(), password: _password.trim(), authMode: authMode, ctx: context);
+    widget.authenicateUser(email: _email.trim(),
+        userName: _userName.trim(),
+        password: _password.trim(),
+        authMode: authMode,
+        ctx: context);
   }
 
   @override
@@ -58,6 +64,8 @@ class _AuthFormState extends State<AuthForm> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  if (authMode == AuthMode.signUp)
+                  UserImagePicker(),
                   TextFormField(
                     key: ValueKey('email'),
                     keyboardType: TextInputType.emailAddress,
@@ -84,7 +92,8 @@ class _AuthFormState extends State<AuthForm> {
                         String errorMessage;
                         int minLength = 4;
                         if (Validators.minLength(value, minLength)) {
-                          errorMessage = 'Please provide  at least $minLength characters';
+                          errorMessage =
+                          'Please provide  at least $minLength characters';
                         }
                         return errorMessage;
                       },
@@ -100,7 +109,8 @@ class _AuthFormState extends State<AuthForm> {
                       String errorMessage;
                       int minLength = 7;
                       if (Validators.minLength(value, minLength)) {
-                        errorMessage = 'Please provide write at least $minLength characters';
+                        errorMessage =
+                        'Please provide write at least $minLength characters';
                       }
                       return errorMessage;
                     },
@@ -110,13 +120,19 @@ class _AuthFormState extends State<AuthForm> {
                   ),
                   if (widget.isLoading) CircularProgressIndicator(),
                   if(!widget.isLoading)
-                  RaisedButton(child: Text((authMode == AuthMode.logIn) ? 'Login' : 'Sign Up'), onPressed: _saveForm),
+                    RaisedButton(child: Text(
+                        (authMode == AuthMode.logIn) ? 'Login' : 'Sign Up'),
+                        onPressed: _saveForm),
                   if(!widget.isLoading)
-                  FlatButton(
-                    onPressed: _changeAuthMode,
-                    child: Text((authMode == AuthMode.logIn) ? 'Create new account' : 'Login instead'),
-                    textColor: Theme.of(context).primaryColor,
-                  )
+                    FlatButton(
+                      onPressed: _changeAuthMode,
+                      child: Text((authMode == AuthMode.logIn)
+                          ? 'Create new account'
+                          : 'Login instead'),
+                      textColor: Theme
+                          .of(context)
+                          .primaryColor,
+                    )
                 ],
               ),
             ),

@@ -1,10 +1,10 @@
 
 
-import '../widgets/messages/messages.dart';
-import '../widgets/messages/new_message.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../widgets/messages/messages.dart';
+import '../widgets/messages/new_message.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({Key key}) : super(key: key);

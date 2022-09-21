@@ -30,7 +30,6 @@ class _AuthState extends State<AuthScreen> {
         await Firestore.instance.collection('users').document(authResult.user.uid).setData({
           'userName': userName,
           'email': email,
-          'userId':
         });
       }
 
