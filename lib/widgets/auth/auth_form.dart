@@ -53,6 +53,7 @@ class _AuthFormState extends State<AuthForm> {
         content: Text('Please pick an image'),
         backgroundColor: Theme.of(context).errorColor,
       ));
+      return;
     }
 
     FocusScope.of(context).unfocus();
@@ -62,6 +63,7 @@ class _AuthFormState extends State<AuthForm> {
         email: _email.trim(),
         userName: _userName.trim(),
         password: _password.trim(),
+        image: _userImageFile,
         authMode: authMode,
         ctx: context);
   }
@@ -160,5 +162,6 @@ typedef AuthenicateUser = void Function(
     {String email,
     String userName,
     String password,
+    File image,
     AuthMode authMode,
     BuildContext ctx});

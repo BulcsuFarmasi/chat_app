@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -15,7 +18,14 @@ class _AuthState extends State<AuthScreen> {
   bool _isLoading = false;
 
   // TODO: use scaffoldmessager and remove context
-  void _authenticateUser({String email, String userName, String password, AuthMode authMode, BuildContext ctx}) async {
+  void _authenticateUser({
+    String email,
+    String userName,
+    String password,
+    File image,
+    AuthMode authMode,
+    BuildContext ctx,
+  }) async {
     AuthResult authResult;
 
     setState(() {
@@ -24,15 +34,27 @@ class _AuthState extends State<AuthScreen> {
 
     try {
       if (authMode == AuthMode.logIn) {
-        authResult = await _auth.signInWithEmailAndPassword(email: email, password: password);
+        authResult = await _auth.signInWithEmailAndPassword(
+            email: email, password: password);
       } else if (authMode == AuthMode.signUp) {
-        authResult = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-        await Firestore.instance.collection('users').document(authResult.user.uid).setData({
+        authResult = await _auth.createUserWithEmailAndPassword(
+            email: email, password: password);
+
+        final ref =  FirebaseStorage.instance
+            .ref()
+            .child('user_image')
+            .child(authResult.user.uid + '.jpg');
+
+        await ref.putFile(image).onComplete;
+
+        await Firestore.instance
+            .collection('users')
+            .document(authResult.user.uid)
+            .setData({
           'userName': userName,
           'email': email,
         });
       }
-
     } on PlatformException catch (err) {
       String message = 'An error occured, please check your credentials';
 
@@ -58,8 +80,8 @@ class _AuthState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Theme.of(context).primaryColor,
-        body: AuthForm(_authenticateUser, _isLoading),
-        );
+      backgroundColor: Theme.of(context).primaryColor,
+      body: AuthForm(_authenticateUser, _isLoading),
+    );
   }
 }
