@@ -152,7 +152,7 @@ class _AuthFormState extends State<AuthForm> {
                     TextButton(
                       onPressed: _changeAuthMode,
                       style: TextButton.styleFrom(
-                          foregroundColor: Theme.of(context).primaryColor),
+                          foregroundColor: Theme.of(context).colorScheme.primary),
                       child: Text((authMode == AuthMode.logIn)
                           ? 'Create new account'
                           : 'Login instead'),
