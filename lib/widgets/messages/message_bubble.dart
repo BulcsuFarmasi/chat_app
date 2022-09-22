@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MessageBubble extends StatelessWidget {
   const MessageBubble(this.message, this.userName, this.userImage, this.isMe,
-      {this.key});
+      {super.key});
 
   final String userName;
   final String userImage;
@@ -13,6 +12,7 @@ class MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      clipBehavior: Clip.none,
       children: [
         Row(
             mainAxisAlignment:
@@ -22,58 +22,50 @@ class MessageBubble extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: isMe
                         ? Colors.grey.shade300
-                        : Theme.of(context).accentColor,
+                        : Theme.of(context).colorScheme.secondary,
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(12),
-                      topRight: Radius.circular(12),
-                      bottomLeft:
-                          !isMe ? Radius.circular(0) : Radius.circular(12),
-                      bottomRight:
-                          !isMe ? Radius.circular(12) : Radius.circular(0),
+                      topLeft: const Radius.circular(12),
+                      topRight: const Radius.circular(12),
+                      bottomLeft: !isMe
+                          ? const Radius.circular(0)
+                          : const Radius.circular(12),
+                      bottomRight: !isMe
+                          ? const Radius.circular(12)
+                          : const Radius.circular(0),
                     )),
                 width: 140,
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                margin: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
                 child: Column(
                   crossAxisAlignment:
                       isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                   children: [
                     Text(userName,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                        style: Theme.of(context).textTheme.headline1!.copyWith(
                             color: isMe
                                 ? Colors.grey
-                                : Theme.of(context)
-                                    .accentTextTheme
-                                    .headline1
-                                    .color)),
-                    Text(
-                      message,
-                      textAlign: isMe ? TextAlign.end : TextAlign.start,
-                      style: TextStyle(
-                          color: isMe
-                              ? Colors.grey
-                              : Theme.of(context)
-                                  .accentTextTheme
-                                  .headline1
-                                  .color),
-                    ),
+                                : Theme.of(context).colorScheme.onSecondary,
+                            fontWeight: FontWeight.bold)),
+                    Text(message,
+                        textAlign: isMe ? TextAlign.end : TextAlign.start,
+                        style: Theme.of(context).textTheme.headline1!.copyWith(
+                            color: isMe
+                                ? Colors.grey
+                                : Theme.of(context).colorScheme.onSecondary)),
                   ],
                 ),
               ),
             ]),
         Positioned(
-          child: CircleAvatar(
-            backgroundImage: NetworkImage(userImage),
-          ),
           top: 0,
           left: isMe ? null : 120,
           right: isMe ? 120 : null,
+          child: CircleAvatar(
+            backgroundImage: NetworkImage(userImage),
+          ),
         ),
       ],
-      clipBehavior: Clip.none,
     );
   }
-
-  final Key key;
 }

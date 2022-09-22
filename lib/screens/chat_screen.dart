@@ -6,12 +6,12 @@ import '../widgets/messages/messages.dart';
 import '../widgets/messages/new_message.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key key}) : super(key: key);
+  const ChatScreen({super.key});
 
   static const logout = 'logout';
 
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
@@ -35,24 +35,22 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('FlutterChat'),
+        title: const Text('FlutterChat'),
         actions: [
           DropdownButton(
             underline: Container(),
             items: [
               DropdownMenuItem(
-                child: Container(
-                  child: Row(
-                    children: [
-                      Icon(Icons.exit_to_app),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Text('Logout')
-                    ],
-                  ),
-                ),
                 value: 'logout',
+                child: Row(
+                  children: const [
+                    Icon(Icons.exit_to_app),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text('Logout')
+                  ],
+                ),
               )
             ],
             onChanged: (itemIdentifier) {
@@ -67,10 +65,9 @@ class _ChatScreenState extends State<ChatScreen> {
           )
         ],
       ),
-      body: Container(
-          child: Column(
-        children: [Expanded(child: Messages()), NewMessage()],
-      )),
+      body: Column(
+        children: const [Expanded(child: Messages()), NewMessage()],
+      ),
     );
   }
 }

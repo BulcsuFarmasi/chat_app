@@ -8,13 +8,13 @@ import 'package:flutter/material.dart';
 enum AuthMode { signUp, logIn }
 
 class AuthForm extends StatefulWidget {
-  const AuthForm(this.authenicateUser, this.isLoading);
+  const AuthForm(this.authenicateUser, this.isLoading, {super.key});
 
   final AuthenicateUser authenicateUser;
   final bool isLoading;
 
   @override
-  _AuthFormState createState() => _AuthFormState();
+  State<AuthForm> createState() => _AuthFormState();
 }
 
 class _AuthFormState extends State<AuthForm> {
@@ -23,7 +23,7 @@ class _AuthFormState extends State<AuthForm> {
   String _email = '';
   String _userName = '';
   String _password = '';
-  File _userImageFile;
+  File? _userImageFile;
 
   AuthMode authMode = AuthMode.logIn;
 
@@ -45,19 +45,19 @@ class _AuthFormState extends State<AuthForm> {
   }
 
   void _saveForm() {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       return;
     }
     if (_userImageFile == null && authMode == AuthMode.signUp) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Please pick an image'),
+        content: const Text('Please pick an image'),
         backgroundColor: Theme.of(context).errorColor,
       ));
       return;
     }
 
     FocusScope.of(context).unfocus();
-    _formKey.currentState.save();
+    _formKey.currentState!.save();
 
     widget.authenicateUser(
         email: _email.trim(),
@@ -71,10 +71,10 @@ class _AuthFormState extends State<AuthForm> {
   Widget build(BuildContext context) {
     return Center(
       child: Card(
-        margin: EdgeInsets.all(20),
+        margin: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Form(
               key: _formKey,
               child: Column(
@@ -83,35 +83,36 @@ class _AuthFormState extends State<AuthForm> {
                   if (authMode == AuthMode.signUp)
                     UserImagePicker(_pickedImage),
                   TextFormField(
-                    key: ValueKey('email'),
+                    key: const ValueKey('email'),
                     autocorrect: false,
                     textCapitalization: TextCapitalization.none,
                     enableSuggestions: false,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(labelText: 'Email address'),
-                    validator: (value) {
-                      String errorMessage;
+                    decoration:
+                        const InputDecoration(labelText: 'Email address'),
+                    validator: (String? value) {
+                      String? errorMessage;
                       if (Validators.email(value)) {
                         errorMessage = 'Please provide a valid email address';
                       }
                       return errorMessage;
                     },
-                    onSaved: (value) {
-                      _email = value;
+                    onSaved: (String? value) {
+                      _email = value!;
                     },
                   ),
                   if (authMode == AuthMode.signUp)
                     TextFormField(
-                      key: ValueKey('username'),
-                      decoration: InputDecoration(labelText: 'Username'),
+                      key: const ValueKey('username'),
+                      decoration: const InputDecoration(labelText: 'Username'),
                       autocorrect: true,
                       textCapitalization: TextCapitalization.words,
                       enableSuggestions: false,
-                      onSaved: (value) {
-                        _userName = value;
+                      onSaved: (String? value) {
+                        _userName = value!;
                       },
-                      validator: (value) {
-                        String errorMessage;
+                      validator: (String? value) {
+                        String? errorMessage;
                         int minLength = 4;
                         if (Validators.minLength(value, minLength)) {
                           errorMessage =
@@ -121,14 +122,14 @@ class _AuthFormState extends State<AuthForm> {
                       },
                     ),
                   TextFormField(
-                    key: ValueKey('password'),
-                    decoration: InputDecoration(labelText: 'Password'),
+                    key: const ValueKey('password'),
+                    decoration: const InputDecoration(labelText: 'Password'),
                     obscureText: true,
-                    onSaved: (value) {
-                      _password = value;
+                    onSaved: (String? value) {
+                      _password = value!;
                     },
-                    validator: (value) {
-                      String errorMessage;
+                    validator: (String? value) {
+                      String? errorMessage;
                       int minLength = 7;
                       if (Validators.minLength(value, minLength)) {
                         errorMessage =
@@ -137,23 +138,24 @@ class _AuthFormState extends State<AuthForm> {
                       return errorMessage;
                     },
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
-                  if (widget.isLoading) CircularProgressIndicator(),
+                  if (widget.isLoading) const CircularProgressIndicator(),
                   if (!widget.isLoading)
                     ElevatedButton(
-                        child: Text(
-                            (authMode == AuthMode.logIn) ? 'Login' : 'Sign Up'),
-                        onPressed: _saveForm),
+                        onPressed: _saveForm,
+                        child: Text((authMode == AuthMode.logIn)
+                            ? 'Login'
+                            : 'Sign Up')),
                   if (!widget.isLoading)
                     TextButton(
                       onPressed: _changeAuthMode,
+                      style: TextButton.styleFrom(
+                          foregroundColor: Theme.of(context).primaryColor),
                       child: Text((authMode == AuthMode.logIn)
                           ? 'Create new account'
                           : 'Login instead'),
-                      style: TextButton.styleFrom(
-                          foregroundColor: Theme.of(context).primaryColor),
                     )
                 ],
               ),
@@ -166,8 +168,8 @@ class _AuthFormState extends State<AuthForm> {
 }
 
 typedef AuthenicateUser = void Function(
-    {String email,
-    String userName,
-    String password,
-    File image,
-    AuthMode authMode});
+    {required String email,
+    String? userName,
+    required String password,
+    File? image,
+    required AuthMode authMode});

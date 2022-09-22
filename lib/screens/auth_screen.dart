@@ -9,6 +9,8 @@ import 'package:flutter/services.dart';
 import '../widgets/auth/auth_form.dart';
 
 class AuthScreen extends StatefulWidget {
+  const AuthScreen({super.key});
+
   @override
   State<AuthScreen> createState() => _AuthState();
 }
@@ -17,13 +19,12 @@ class _AuthState extends State<AuthScreen> {
   final _auth = FirebaseAuth.instance;
   bool _isLoading = false;
 
-  // TODO: use scaffoldmessager and remove context
   void _authenticateUser({
-    String email,
-    String userName,
-    String password,
-    File image,
-    AuthMode authMode,
+    required String email,
+    String? userName,
+    required String password,
+    File? image,
+    required AuthMode authMode,
   }) async {
     UserCredential authResult;
 
@@ -42,15 +43,15 @@ class _AuthState extends State<AuthScreen> {
         final ref =  FirebaseStorage.instance
             .ref()
             .child('user_image')
-            .child(authResult.user.uid + '.jpg');
+            .child('${authResult.user!.uid}.jpg');
 
-        await ref.putFile(image);
+        await ref.putFile(image!);
 
         final url = await ref.getDownloadURL();
 
         await FirebaseFirestore.instance
             .collection('users')
-            .doc(authResult.user.uid)
+            .doc(authResult.user!.uid)
             .set({
           'userName': userName,
           'email': email,
@@ -61,7 +62,7 @@ class _AuthState extends State<AuthScreen> {
       String message = 'An error occured, please check your credentials';
 
       if (err.message != null) {
-        message = err.message;
+        message = err.message!;
       }
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

@@ -3,22 +3,24 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class NewMessage extends StatefulWidget {
+  const NewMessage({super.key});
+
   @override
   State<NewMessage> createState() => _NewMessagesState();
 }
 
 class _NewMessagesState extends State<NewMessage> {
   String _enteredMessage = '';
-  final _textController = new TextEditingController();
+  final _textController = TextEditingController();
 
   void _sendMessage() async {
     FocusScope.of(context).unfocus();
     final user = FirebaseAuth.instance.currentUser;
-    final userData = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+    final userData = await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
     FirebaseFirestore.instance.collection('chat').add({
       'text': _enteredMessage,
       'createdAt': Timestamp.now(),
-      'userId': user.uid,
+      'userId': user!.uid,
       'userName': userData['userName'],
       'userImage': userData['image_url'],
     });
@@ -29,8 +31,8 @@ class _NewMessagesState extends State<NewMessage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 8),
-      padding: EdgeInsets.all(10),
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.all(10),
       child: Row(
         children: [
           Expanded(
@@ -39,7 +41,7 @@ class _NewMessagesState extends State<NewMessage> {
               textCapitalization: TextCapitalization.sentences,
               autocorrect: true,
               enableSuggestions: true,
-              decoration: InputDecoration(labelText: 'Send a message...'),
+              decoration: const InputDecoration(labelText: 'Send a message...'),
               onChanged: (value) {
                 setState(() {
                   _enteredMessage = value;
@@ -48,7 +50,7 @@ class _NewMessagesState extends State<NewMessage> {
             ),
           ),
           IconButton(
-              icon: Icon(Icons.send),
+              icon: const Icon(Icons.send),
               onPressed: _enteredMessage.isEmpty ? null : _sendMessage,
               color: Theme.of(context).primaryColor)
         ],

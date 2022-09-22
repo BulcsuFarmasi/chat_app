@@ -8,41 +8,46 @@ import './screens/auth_screen.dart';
 import './screens/chat_screen.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final initialization =
         Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     return FutureBuilder<FirebaseApp>(
-      future: initialization,
-      builder: (BuildContext context, AsyncSnapshot<FirebaseApp> appSnapshot) {
-        return MaterialApp(
-          title: 'Flutter Demo',
-          theme: ThemeData(
-            primarySwatch: Colors.pink,
-            backgroundColor: Colors.pink,
-            accentColor: Colors.deepPurple,
-            accentColorBrightness: Brightness.dark,
-            buttonTheme: ButtonTheme.of(context).copyWith(
-                buttonColor: Colors.pink,
-                textTheme: ButtonTextTheme.primary,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20)))),
-            visualDensity: VisualDensity.adaptivePlatformDensity,
-          ),
-          home: appSnapshot.connectionState == ConnectionState.waiting ? SplashScreen() :
-          StreamBuilder(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (BuildContext context, AsyncSnapshot userSnapshot) {
-              return (userSnapshot.hasData) ? ChatScreen() : AuthScreen();
-            },
-          ),
-        );
-      }
-    );
+        future: initialization,
+        builder:
+            (BuildContext context, AsyncSnapshot<FirebaseApp> appSnapshot) {
+          return MaterialApp(
+            title: 'Flutter Demo',
+            theme: ThemeData(
+              backgroundColor: Colors.pink,
+              buttonTheme: ButtonTheme.of(context).copyWith(
+                  buttonColor: Colors.pink,
+                  textTheme: ButtonTextTheme.primary,
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)))),
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+              colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.pink)
+                  .copyWith(secondary: Colors.deepPurple),
+            ),
+            home: appSnapshot.connectionState == ConnectionState.waiting
+                ? const SplashScreen()
+                : StreamBuilder(
+                    stream: FirebaseAuth.instance.authStateChanges(),
+                    builder:
+                        (BuildContext context, AsyncSnapshot userSnapshot) {
+                      return (userSnapshot.hasData)
+                          ? const ChatScreen()
+                          : const AuthScreen();
+                    },
+                  ),
+          );
+        });
   }
 }
