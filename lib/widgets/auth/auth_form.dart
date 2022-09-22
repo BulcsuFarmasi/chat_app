@@ -49,7 +49,7 @@ class _AuthFormState extends State<AuthForm> {
       return;
     }
     if (_userImageFile == null && authMode == AuthMode.signUp) {
-      Scaffold.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Please pick an image'),
         backgroundColor: Theme.of(context).errorColor,
       ));
@@ -64,8 +64,7 @@ class _AuthFormState extends State<AuthForm> {
         userName: _userName.trim(),
         password: _password.trim(),
         image: _userImageFile,
-        authMode: authMode,
-        ctx: context);
+        authMode: authMode);
   }
 
   @override
@@ -81,7 +80,8 @@ class _AuthFormState extends State<AuthForm> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (authMode == AuthMode.signUp) UserImagePicker(_pickedImage),
+                  if (authMode == AuthMode.signUp)
+                    UserImagePicker(_pickedImage),
                   TextFormField(
                     key: ValueKey('email'),
                     autocorrect: false,
@@ -142,17 +142,18 @@ class _AuthFormState extends State<AuthForm> {
                   ),
                   if (widget.isLoading) CircularProgressIndicator(),
                   if (!widget.isLoading)
-                    RaisedButton(
+                    ElevatedButton(
                         child: Text(
                             (authMode == AuthMode.logIn) ? 'Login' : 'Sign Up'),
                         onPressed: _saveForm),
                   if (!widget.isLoading)
-                    FlatButton(
+                    TextButton(
                       onPressed: _changeAuthMode,
                       child: Text((authMode == AuthMode.logIn)
                           ? 'Create new account'
                           : 'Login instead'),
-                      textColor: Theme.of(context).primaryColor,
+                      style: TextButton.styleFrom(
+                          foregroundColor: Theme.of(context).primaryColor),
                     )
                 ],
               ),
@@ -169,5 +170,4 @@ typedef AuthenicateUser = void Function(
     String userName,
     String password,
     File image,
-    AuthMode authMode,
-    BuildContext ctx});
+    AuthMode authMode});

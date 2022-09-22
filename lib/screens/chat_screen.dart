@@ -1,5 +1,3 @@
-
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -17,23 +15,19 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-
   @override
   void initState() {
     super.initState();
-    final fbm = FirebaseMessaging();
-    fbm.requestNotificationPermissions();
-    fbm.configure(onMessage: (msg) {
-      print(msg);
+    final fbm = FirebaseMessaging.instance;
+    fbm.requestPermission();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print(message);
       return;
-    }, onLaunch: (msg) {
-      print(msg);
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print(message);
       return;
-    }, onResume: (msg) {
-      print(msg);
-      return;
-    }
-    );
+    });
     fbm.subscribeToTopic('chat');
   }
 
@@ -75,10 +69,7 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       body: Container(
           child: Column(
-        children: [
-          Expanded(child: Messages()),
-          NewMessage()
-        ],
+        children: [Expanded(child: Messages()), NewMessage()],
       )),
     );
   }
